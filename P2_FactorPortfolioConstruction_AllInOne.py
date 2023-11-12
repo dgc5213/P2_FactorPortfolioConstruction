@@ -4,14 +4,18 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 from scipy import stats
-
+### Read raw data, and store as data frame
 def readCSV(path_csv):
+   # df = pd.read_csv(path_csv,nrows=9999) ## to testing to use, sample data
     df = pd.read_csv(path_csv)
     return df
+
 
 def readExcel(path_xlsx):
     df = pd.read_excel(path_xlsx)
     return df
+
+
 
 def prepareData(df):
     df['date'] = pd.to_datetime(df['date'])
@@ -21,6 +25,8 @@ def prepareData(df):
     return df
 
 def getPlot_MonthlyStocks(df):
+
+
     # Count unique stock_ids
     monthly_stock_counts = df.groupby(['year', 'month'])['stock_id'].nunique()
 
@@ -50,6 +56,8 @@ def getPlot_MonthlyStocks(df):
     plt.pause(1)
     plt.close()
 
+
+
     ## Create a pivot table to make it easier to plot yearly trends
     pivot_table = monthly_stock_counts.unstack(level='year')
     ## Use a colormap with more than 22 distinct colors
@@ -69,14 +77,20 @@ def getPlot_MonthlyStocks(df):
     handles, _ = plt.gca().get_legend_handles_labels()
     plt.legend(handles, labels, title='Year', loc='upper left', bbox_to_anchor=(1, 1), prop={'size': 8})
 
+
+
+
     plt.tight_layout()
     plt.savefig("2_IMG/YearlyMonthlyStocks.png")
     # plt.show()
     plt.pause(1)
     plt.close()
 
+
     ## Output the pivot_table result to an Excel file
     pivot_table.to_excel('2_WIP/YearlyMonthlyStockCounts.xlsx', index=True)
+
+
 
 
 def getDistribution_returnField(df,returns_column):
@@ -92,6 +106,7 @@ def getDistribution_returnField(df,returns_column):
     # plt.show()
     plt.pause(1)
     plt.close()
+
 
     ## use Using Z-Scores: to find outliers
     # Calculate z-scores for the return field
@@ -120,6 +135,8 @@ def getDistribution_returnField(df,returns_column):
     plt.tight_layout()
     plt.savefig(f'2_IMG/{returns_column}_CombinedReturnFieldDistributions.png')
     # plt.show()
+    plt.pause(1)
+    plt.close()
 
 
     df[returns_column + '_zscore_copy']=df[returns_column + '_zscore'] #copy to a new column, ready to use
@@ -134,6 +151,7 @@ def getDistribution_returnField(df,returns_column):
 
     ### Winsorize the 'zscore_copy' column
     df[returns_column + '_zscore_winsorized'] = df[returns_column + '_zscore_copy'].clip(lower_limit, upper_limit)
+
 
 
     # Visualize the winsorized z-score distribution
@@ -165,7 +183,6 @@ def getDistribution_returnField(df,returns_column):
 
 
 
-
 def getCoverage_returnField(df,returns_column):
 
     #### Pivot the DataFrame to check for missing return data by date and stock
@@ -189,7 +206,7 @@ def getCoverage_returnField(df,returns_column):
     unique_stock_count = len(stocks_with_missing_data)
     print(f"Total unique stocks with missing data for {returns_column}: {unique_stock_count}")
 
-
+    ###
 
 
     ### Calculate % not missing for each stock
